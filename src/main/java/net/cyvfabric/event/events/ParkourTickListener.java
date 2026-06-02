@@ -1,15 +1,23 @@
 package net.cyvfabric.event.events;
 
+import mcpk.utils.MathHelper;
 import net.cyvfabric.CyvFabric;
 import net.cyvfabric.config.CyvClientConfig;
 import net.cyvfabric.util.parkour.LandingBlock;
 import net.cyvfabric.util.parkour.LandingBlockOffset;
 import net.cyvfabric.util.parkour.LandingMode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.debug.DebugRenderer;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class ParkourTickListener {
     public static boolean jumpTick = false;
@@ -57,6 +65,10 @@ public class ParkourTickListener {
 
     public static float last45 = 0;
     public static float lastTurning = 0;
+    public static final int JUMP_TURN_HISTORY_SIZE = 20;
+    public static double[] jumpTurnAngles = new double[JUMP_TURN_HISTORY_SIZE];
+    public static int jumpTurnAnglesRecorded = 0;
+    private static boolean recordingJumpTurnAngles = false;
 
     public static int sidestep = 0; //0 = wad 1 = wdwa
     public static int sidestepTime = -1;
@@ -76,6 +88,7 @@ public class ParkourTickListener {
 
     public static void register() {
         ClientTickEvents.END_CLIENT_TICK.register(ParkourTickListener::onTick);
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(ParkourTickListener::onRender);
     }
 
     //end of tick
@@ -113,6 +126,10 @@ public class ParkourTickListener {
         }
 
         if (jumpTick) {
+            Arrays.fill(jumpTurnAngles, 0.0D);
+            jumpTurnAnglesRecorded = 0;
+            recordingJumpTurnAngles = true;
+
             if (mcPlayer.getDeltaMovement().y > 0 && vy >= 0) {
                 jx = x;
                 jy = y;
@@ -163,6 +180,17 @@ public class ParkourTickListener {
 
         //last turning
         if (f != lastTick.f) lastTurning = f - lastTick.f;
+
+        if (recordingJumpTurnAngles) {
+            if (!mcPlayer.onGround() && airtime >= 1 && jumpTurnAnglesRecorded < JUMP_TURN_HISTORY_SIZE) {
+                jumpTurnAngles[jumpTurnAnglesRecorded] = MathHelper.wrapDegrees(vf);
+                jumpTurnAnglesRecorded++;
+            }
+
+            if (mcPlayer.onGround() || jumpTurnAnglesRecorded >= JUMP_TURN_HISTORY_SIZE) {
+                recordingJumpTurnAngles = false;
+            }
+        }
 
         //hit tick
         if (lastTick != null && mcPlayer.onGround() && !lastTick.onGround && vy < 0) {
@@ -560,58 +588,46 @@ public class ParkourTickListener {
 
     }
 
-    /*
-    public void onRender(WorldRenderEvent e) {
-        if (e.phase != Phase.MID) return;
+    private static void onRender(WorldRenderContext context) {
+        if (Minecraft.getInstance().player == null || Minecraft.getInstance().level == null) return;
 
-        Entity p = Minecraft.getMinecraft().getRenderViewEntity();
-        double pX = p.lastTickPosX + (e.renderTickTime * (p.posX - p.lastTickPosX));
-        double pY = p.lastTickPosY + (e.renderTickTime * (p.posY - p.lastTickPosY));
-        double pZ = p.lastTickPosZ + (e.renderTickTime * (p.posZ - p.lastTickPosZ));
-
-        GL11.glLineWidth(2);
-        GlStateManager.disableDepth();
+        Vec3 camera = context.camera().getPosition();
+        context.matrixStack().pushPose();
+        context.matrixStack().translate(-camera.x, -camera.y, -camera.z);
 
         if (CyvClientConfig.getBoolean("highlightLandingCond", false)) {
             if (landingBlock != null) {
-                AxisAlignedBB bb = new AxisAlignedBB(landingBlock.xMinCond - pX + 0.3, landingBlock.smallestY() - pY,
-                        landingBlock.zMinCond - pZ + 0.3, landingBlock.xMaxCond - pX - 0.3, landingBlock.largestY() - pY,
-                        landingBlock.zMaxCond - pZ - 0.3);
-
-                RenderUtils.drawFilledBox(bb.expand(0.001, 0.001, 0.001), 0, 192, 255, 25);
-                RenderUtils.drawBoxOutline(bb.expand(0.001, 0.001, 0.001), 0, 192, 255, 75);
+                renderBox(context, new AABB(landingBlock.xMinCond + 0.3, landingBlock.smallestY(),
+                        landingBlock.zMinCond + 0.3, landingBlock.xMaxCond - 0.3, landingBlock.largestY(),
+                        landingBlock.zMaxCond - 0.3), 0.0F, 0.75F, 1.0F, 0.15F);
             }
 
             if (momentumBlock != null) {
-                AxisAlignedBB bb = new AxisAlignedBB(momentumBlock.xMinCond - pX + 0.3, momentumBlock.smallestY() - pY,
-                        momentumBlock.zMinCond - pZ + 0.3, momentumBlock.xMaxCond - pX - 0.3, momentumBlock.largestY() - pY,
-                        momentumBlock.zMaxCond - pZ - 0.3);
-
-                RenderUtils.drawFilledBox(bb.expand(0.001, 0.001, 0.001), 255, 0, 0, 25);
-                RenderUtils.drawBoxOutline(bb.expand(0.001, 0.001, 0.001), 255, 0, 0, 75);
+                renderBox(context, new AABB(momentumBlock.xMinCond + 0.3, momentumBlock.smallestY(),
+                        momentumBlock.zMinCond + 0.3, momentumBlock.xMaxCond - 0.3, momentumBlock.largestY(),
+                        momentumBlock.zMaxCond - 0.3), 1.0F, 0.0F, 0.0F, 0.15F);
             }
         }
 
         if (CyvClientConfig.getBoolean("highlightLanding", false)) {
             if (landingBlock != null) {
-                for (AxisAlignedBB bb : landingBlock.AABB) {
-                    AxisAlignedBB renderBB = bb.offset(-pX, -pY, -pZ).contract(0.3, 0, 0.3);
-                    RenderUtils.drawFilledBox(renderBB.expand(0.001, 0.001, 0.001), 0, 192, 255, 100);
-                    RenderUtils.drawBoxOutline(renderBB.expand(0.001, 0.001, 0.001), 0, 192, 255, 200);
+                for (AABB bb : landingBlock.bb) {
+                    renderBox(context, bb, 0.0F, 0.75F, 1.0F, 0.4F);
                 }
             }
 
             if (momentumBlock != null) {
-                for (AxisAlignedBB bb : momentumBlock.AABB) {
-                    AxisAlignedBB renderBB = bb.offset(-pX, -pY, -pZ).contract(0.3, 0, 0.3);
-                    RenderUtils.drawFilledBox(renderBB.expand(0.001, 0.001, 0.001), 255, 0, 0, 100);
-                    RenderUtils.drawBoxOutline(renderBB.expand(0.001, 0.001, 0.001), 255, 0, 0, 200);
+                for (AABB bb : momentumBlock.bb) {
+                    renderBox(context, bb, 1.0F, 0.0F, 0.0F, 0.4F);
                 }
             }
         }
 
-        GlStateManager.enableDepth();
-
+        context.matrixStack().popPose();
     }
-     */
+
+    private static void renderBox(WorldRenderContext context, AABB bb, float r, float g, float b, float a) {
+        if (bb == null || bb.getXsize() <= 0 || bb.getYsize() <= 0 || bb.getZsize() <= 0) return;
+        DebugRenderer.renderFilledBox(context.matrixStack(), context.consumers(), bb.inflate(0.001), r, g, b, a);
+    }
 }

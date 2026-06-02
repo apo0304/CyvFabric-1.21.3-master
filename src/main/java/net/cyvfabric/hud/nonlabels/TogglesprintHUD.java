@@ -7,7 +7,7 @@ import net.cyvfabric.hud.structure.ScreenPosition;
 import net.cyvfabric.keybinding.KeybindingTogglesprint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class TogglesprintHUD extends DraggableHUDElement {
     private static final String TEXT = "Sprint Toggled";
@@ -30,18 +30,18 @@ public class TogglesprintHUD extends DraggableHUDElement {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor context, ScreenPosition pos) {
+    public void render(GuiGraphics context, ScreenPosition pos) {
         if (!this.isVisible) return;
         if (!KeybindingTogglesprint.sprintToggled) return;
 
         renderText(context, pos);
     }
     @Override
-    public void renderDummy(GuiGraphicsExtractor context, ScreenPosition pos) {
+    public void renderDummy(GuiGraphics context, ScreenPosition pos) {
         renderText(context, pos);
     }
 
-    private void renderText(GuiGraphicsExtractor context, ScreenPosition pos) {
+    private void renderText(GuiGraphics context, ScreenPosition pos) {
         long color1 = CyvClientColorHelper.color1.drawColor;
         long color2 = CyvClientColorHelper.color2.drawColor;
         Font font = mc.font;

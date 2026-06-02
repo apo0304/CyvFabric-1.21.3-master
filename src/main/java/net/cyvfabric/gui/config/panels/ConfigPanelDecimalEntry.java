@@ -6,11 +6,8 @@ import net.cyvfabric.gui.GuiModConfig;
 import net.cyvfabric.gui.config.ConfigPanel;
 import net.cyvfabric.util.GuiUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import com.mojang.blaze3d.platform.Window;
@@ -57,14 +54,14 @@ public class ConfigPanelDecimalEntry implements ConfigPanel {
     }
 
     @Override
-    public void draw(@UnknownNullability GuiGraphicsExtractor context, int mouseX, int mouseY, int scroll) {
-        context.text(Minecraft.getInstance().font, this.displayString, this.xPosition, this.yPosition+this.sizeY/2-Minecraft.getInstance().font.lineHeight/2+1-scroll, 0xFFFFFFFF);
+    public void draw(@UnknownNullability GuiGraphics context, int mouseX, int mouseY, int scroll) {
+        context.drawString(Minecraft.getInstance().font, this.displayString, this.xPosition, this.yPosition+this.sizeY/2-Minecraft.getInstance().font.lineHeight/2+1-scroll, 0xFFFFFFFF);
         //bg
         GuiUtils.drawRoundedRect(context, this.xPosition+this.sizeX/2, this.yPosition-scroll, this.xPosition+this.sizeX, this.yPosition+this.sizeY-scroll, 3, this.mouseInBounds(mouseX, mouseY) ? CyvFabric.theme.shade1 : CyvFabric.theme.shade2);
 
 
         this.field.setY(this.yPosition+this.sizeY/2-Minecraft.getInstance().font.lineHeight/2+1-scroll);
-        this.field.extractRenderState(context, mouseX, mouseY, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
+        this.field.render(context, mouseX, mouseY, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
     }
 
     @Override
@@ -79,10 +76,10 @@ public class ConfigPanelDecimalEntry implements ConfigPanel {
     }
 
     @Override
-    public void mouseClicked(MouseButtonEvent click, boolean doubled) {
-        this.field.mouseClicked(click, doubled);
+    public void mouseClicked(double mouseX, double mouseY, int button) {
+        this.field.mouseClicked(mouseX, mouseY, button);
 
-        if (!(click.x() >= field.getX() && click.x() <= field.getX() + field.getWidth() && click.y() >= field.getY() && click.y() <= field.getY() + field.getHeight())) {
+        if (!(mouseX >= field.getX() && mouseX <= field.getX() + field.getWidth() && mouseY >= field.getY() && mouseY <= field.getY() + field.getHeight())) {
             this.unselect();
         } else {
             this.select();
@@ -91,13 +88,13 @@ public class ConfigPanelDecimalEntry implements ConfigPanel {
 
 
     @Override
-    public void charTyped(CharacterEvent input) {
-        this.field.charTyped(input);
+    public void charTyped(char input, int modifiers) {
+        this.field.charTyped(input, modifiers);
     }
 
     @Override
-    public void keyPressed(KeyEvent input) {
-        this.field.keyPressed(input);
+    public void keyPressed(int keyCode, int scanCode, int modifiers) {
+        this.field.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

@@ -2,7 +2,7 @@ package net.cyvfabric.hud.structure;
 
 import net.cyvfabric.config.CyvClientColorHelper;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.Supplier;
 
@@ -43,15 +43,15 @@ public class DraggableHUDLabel<T> extends DraggableHUDElement {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor context, ScreenPosition pos) {
+    public void render(GuiGraphics context, ScreenPosition pos) {
         renderForValue(context, pos, valueSupplier.get());
     }
     @Override
-    public void renderDummy(GuiGraphicsExtractor context, ScreenPosition pos) {
+    public void renderDummy(GuiGraphics context, ScreenPosition pos) {
         renderForValue(context, pos, labelFormat.dummyValue);
     }
 
-    protected void renderForValue(GuiGraphicsExtractor context, ScreenPosition pos, T value) {
+    protected void renderForValue(GuiGraphics context, ScreenPosition pos, T value) {
         if (!this.isVisible) return;
         long color1 = CyvClientColorHelper.color1.drawColor;
         long color2 = CyvClientColorHelper.color2.drawColor;

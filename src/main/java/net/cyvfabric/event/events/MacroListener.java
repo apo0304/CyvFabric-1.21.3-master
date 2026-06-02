@@ -3,14 +3,13 @@ package net.cyvfabric.event.events;
 import net.cyvfabric.CyvFabric;
 import net.cyvfabric.command.mpk.CommandMacro;
 import net.cyvfabric.config.CyvClientConfig;
-import net.cyvfabric.hud.RenderLayers;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import java.util.ArrayList;
 
@@ -24,10 +23,10 @@ public class MacroListener {
 
     public static void register() {
         ClientTickEvents.START_CLIENT_TICK.register(MacroListener::onTick);
-        HudElementRegistry.addLast(RenderLayers.MACRO_LAYER, MacroListener::onRender);
+        HudRenderCallback.EVENT.register(MacroListener::onRender);
     }
 
-    public static void onRender(GuiGraphicsExtractor context, DeltaTracker partialTicks) {
+    public static void onRender(GuiGraphics context, DeltaTracker partialTicks) {
         if (!CyvClientConfig.getBoolean("smoothMacro", false)) return;
 
         Minecraft mc = Minecraft.getInstance();

@@ -6,15 +6,15 @@ import net.cyvfabric.gui.GuiMPK;
 import net.cyvfabric.gui.GuiModConfig;
 import net.cyvfabric.hud.labels.*;
 import net.cyvfabric.hud.nonlabels.DirectionHUD;
+import net.cyvfabric.hud.nonlabels.JumpTurnHistoryHUD;
 import net.cyvfabric.hud.nonlabels.KeystrokesHUD;
 import net.cyvfabric.hud.nonlabels.TogglesprintHUD;
 import net.cyvfabric.hud.structure.DraggableHUDElement;
 import net.cyvfabric.hud.structure.ScreenPosition;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 
@@ -26,11 +26,12 @@ public class HUDManager {
     private static Minecraft mc = Minecraft.getInstance();
 
     public static void init() { //initialize and create eventlistener
-        HudElementRegistry.attachElementBefore(VanillaHudElements.PLAYER_LIST, RenderLayers.LABELS_LAYER, HUDManager::render);
+        HudRenderCallback.EVENT.register(HUDManager::render);
 
         registeredRenderers.add(new DirectionHUD());
         registeredRenderers.add(new TogglesprintHUD());
         registeredRenderers.add(new KeystrokesHUD());
+        registeredRenderers.add(new JumpTurnHistoryHUD());
 
         registeredRenderers.addAll(new LabelBundleCoordinates().labels);
         registeredRenderers.addAll(new LabelBundleHitCoords().labels);
@@ -46,10 +47,10 @@ public class HUDManager {
         registeredRenderers.addAll(new LabelBundleHitExtras().labels);
     }
 
-    private static void render(GuiGraphicsExtractor context, DeltaTracker partialTicks) {
+    private static void render(GuiGraphics context, DeltaTracker partialTicks) {
         if (CommandMacro.macroRunning > 0) { //macrorunning
             Window sr = mc.getWindow();
-            context.text(mc.font, "MACRO",
+            context.drawString(mc.font, "MACRO",
                     sr.getGuiScaledWidth()/2 - mc.font.width("MACRO") / 2,
                     sr.getGuiScaledHeight()/5, 0xFFFF0000, false);
         }
@@ -61,14 +62,14 @@ public class HUDManager {
                 if (mc.screen instanceof ContainerScreen && !renderer.renderInGui()) continue;
                 if (mc.screen instanceof ChatScreen && !renderer.renderInChat()) continue;
 
-                if (mc.debugEntries.isOverlayVisible() && !renderer.renderInOverlay()) continue;
+                if (mc.getDebugOverlay().showDebugScreen() && !renderer.renderInOverlay()) continue;
 
                 callRenderer(renderer, context, partialTicks);
             }
         }
     }
 
-    private static void callRenderer(DraggableHUDElement renderer, GuiGraphicsExtractor context, DeltaTracker partialTicks) {
+    private static void callRenderer(DraggableHUDElement renderer, GuiGraphics context, DeltaTracker partialTicks) {
         if (!renderer.isEnabled) return;
         if (!renderer.isVisible) return;
 
@@ -78,7 +79,7 @@ public class HUDManager {
             pos = renderer.getDefaultPosition();
         }
 
-        renderer.extractRenderState(context, pos);
+        renderer.render(context, pos);
 
     }
 

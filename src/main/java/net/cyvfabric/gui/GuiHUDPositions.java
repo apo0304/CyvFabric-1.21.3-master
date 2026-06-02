@@ -8,9 +8,7 @@ import net.cyvfabric.hud.structure.ScreenPosition;
 import net.cyvfabric.util.CyvGui;
 import net.cyvfabric.util.GuiUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.UnknownNullability;
 import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.Window;
@@ -47,8 +45,8 @@ public class GuiHUDPositions extends CyvGui {
     }
 
     @Override
-    public void extractRenderState(@UnknownNullability GuiGraphicsExtractor context, int mouseX, int mouseY, float partialTicks) {
-        this.extractTransparentBackground(context);
+    public void render(@UnknownNullability GuiGraphics context, int mouseX, int mouseY, float partialTicks) {
+        this.renderTransparentBackground(context);
 
         GuiUtils.drawBorder(context, 0, 0, this.width, this.height, ((Long) CyvClientColorHelper.color1.drawColor).intValue()); //GUI Border
 
@@ -68,8 +66,8 @@ public class GuiHUDPositions extends CyvGui {
     }
 
     @Override
-    public boolean charTyped(CharacterEvent input) {
-        if (input.codepoint() == GLFW.GLFW_KEY_ESCAPE) {
+    public boolean charTyped(char input, int modifiers) {
+        if (input == GLFW.GLFW_KEY_ESCAPE) {
             renderers.entrySet().forEach((entry) -> {
                 entry.getKey().save(entry.getValue());
             });
@@ -77,28 +75,28 @@ public class GuiHUDPositions extends CyvGui {
             if (fromLabels) Minecraft.getInstance().setScreen(new GuiMPK());
             else this.onClose();
             return true;
-        } else if (input.codepoint() == GLFW.GLFW_KEY_UP) {
+        } else if (input == GLFW.GLFW_KEY_UP) {
             if (selectedRenderer.isPresent()) {
                 if (selectedRenderer.get().isDraggable) {
                     moveSelectedRenderBy(0,-1);
                     return true;
                 }
             }
-        } else if (input.codepoint() == GLFW.GLFW_KEY_LEFT) {
+        } else if (input == GLFW.GLFW_KEY_LEFT) {
             if (selectedRenderer.isPresent()) {
                 if (selectedRenderer.get().isDraggable) {
                     moveSelectedRenderBy(-1,0);
                     return true;
                 }
             }
-        } else if (input.codepoint() == GLFW.GLFW_KEY_DOWN) {
+        } else if (input == GLFW.GLFW_KEY_DOWN) {
             if (selectedRenderer.isPresent()) {
                 if (selectedRenderer.get().isDraggable) {
                     moveSelectedRenderBy(0,1);
                     return true;
                 }
             }
-        } else if (input.codepoint() == GLFW.GLFW_KEY_RIGHT) {
+        } else if (input == GLFW.GLFW_KEY_RIGHT) {
             if (selectedRenderer.isPresent()) {
                 if (selectedRenderer.get().isDraggable) {
                     moveSelectedRenderBy(1,0);
@@ -111,8 +109,8 @@ public class GuiHUDPositions extends CyvGui {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
-        if (click.button() == 0) { //left-clicked
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double offsetX, double offsetY) {
+        if (button == 0) { //left-clicked
             if (selectedRenderer.isPresent()) {
                 if (selectedRenderer.get().isDraggable) {
                     prevX += offsetX;
@@ -129,13 +127,13 @@ public class GuiHUDPositions extends CyvGui {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.prevX = 0;
         this.prevY = 0;
 
-        loadMouseOver((int) click.x(), (int) click.y());
+        loadMouseOver((int) mouseX, (int) mouseY);
 
-        if (click.button() == 1) { //right-clicked
+        if (button == 1) { //right-clicked
             if (!this.selectedRenderer.isPresent()) return false;
             DraggableHUDElement modRender = this.selectedRenderer.get();
             modRender.isVisible = !modRender.isVisible;

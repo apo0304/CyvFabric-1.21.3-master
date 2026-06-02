@@ -3,7 +3,7 @@ package net.cyvfabric.event.events;
 import net.cyvfabric.keybinding.*;
 import net.cyvfabric.util.CyvKeybinding;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
@@ -21,7 +21,7 @@ public class KeyInputHandler {
         cyvKeybindings.add(new KeybindingStopMacro());
 
         for (KeyMapping k : cyvKeybindings) { //register each keybinding in the array
-            KeyMappingHelper.registerKeyMapping(k);
+            KeyBindingHelper.registerKeyBinding(k);
         }
 
         registerKeyInputs();

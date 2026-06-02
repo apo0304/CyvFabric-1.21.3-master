@@ -29,6 +29,9 @@ public class CyvClientConfig {
         configFields.put("highlightLanding", new ConfigValue<Boolean>(false));
         configFields.put("highlightLandingCond", new ConfigValue<Boolean>(false));
         configFields.put("momentumPbCancelling", new ConfigValue<Boolean>(false));
+        configFields.put("turnangle", new ConfigValue<Integer>(20));
+        configFields.put("turnangleDecimals", new ConfigValue<Integer>(16));
+        configFields.put("turnangleTrimZeroes", new ConfigValue<Boolean>(false));
 
         //inertia listener
         configFields.put("inertiaEnabled", new ConfigValue<Boolean>(false));

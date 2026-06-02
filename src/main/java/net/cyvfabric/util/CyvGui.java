@@ -1,7 +1,7 @@
 package net.cyvfabric.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -13,7 +13,7 @@ public class CyvGui extends Screen {
     }
 
     //called each frame, put the drawScreen things here.
-    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float partialTicks) {
 //        Minecraft mc = Minecraft.getInstance();
     }
 

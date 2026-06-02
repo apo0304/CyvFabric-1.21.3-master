@@ -1,6 +1,6 @@
 package net.cyvfabric.hud.structure;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 public interface IRenderer {
     int getWidth();
@@ -10,10 +10,10 @@ public interface IRenderer {
 
     ScreenPosition load();
 
-    void extractRenderState(GuiGraphicsExtractor context, ScreenPosition pos);
+    void render(GuiGraphics context, ScreenPosition pos);
 
-    default void renderDummy(GuiGraphicsExtractor context, ScreenPosition pos) {
-        extractRenderState(context, pos);
+    default void renderDummy(GuiGraphics context, ScreenPosition pos) {
+        render(context, pos);
     }
 
     default boolean renderInChat() {

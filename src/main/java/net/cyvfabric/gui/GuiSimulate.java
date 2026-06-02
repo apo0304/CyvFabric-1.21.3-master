@@ -6,12 +6,9 @@ import net.cyvfabric.CyvFabric;
 import net.cyvfabric.util.CyvGui;
 import net.cyvfabric.util.GuiUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.UnknownNullability;
 import org.lwjgl.glfw.GLFW;
@@ -45,7 +42,7 @@ public class GuiSimulate extends CyvGui {
     }
 
     @Override
-    public void extractRenderState(@UnknownNullability GuiGraphicsExtractor context, int mouseX, int mouseY, float partialTicks) {
+    public void render(@UnknownNullability GuiGraphics context, int mouseX, int mouseY, float partialTicks) {
         Window sr = Minecraft.getInstance().getWindow();
         int width = sr.getGuiScaledWidth();
         int height = sr.getGuiScaledHeight();
@@ -55,25 +52,25 @@ public class GuiSimulate extends CyvGui {
         int x2 = (int) (sr.getGuiScaledWidth() * 0.80);
         int y2 = (int) (sr.getGuiScaledHeight() * 0.50);
 
-        super.extractTransparentBackground(context); //background tint
+        super.renderTransparentBackground(context); //background tint
         GuiUtils.drawRoundedRect(context, x1-2, y1-2, x2+2, y2+2, 9, 0x88000000);
         GuiUtils.drawRoundedRect(context, x1, y1, x2, y2, 7, 0x11000000);
 
-        input.extractRenderState(context, mouseX, mouseY, partialTicks);
-        button.extractRenderState(context, mouseX, mouseY, partialTicks);
+        input.render(context, mouseX, mouseY, partialTicks);
+        button.render(context, mouseX, mouseY, partialTicks);
 
-        context.centeredText(font, "Movement Simulator", x1+46, y1-15, 0xFFFFFFFF);
+        context.drawCenteredString(font, "Movement Simulator", x1+46, y1-15, 0xFFFFFFFF);
     }
 
     @Override
-    public boolean charTyped(CharacterEvent charInput) {
-        this.input.charTyped(charInput);
-        return super.charTyped(charInput);
+    public boolean charTyped(char charInput, int modifiers) {
+        this.input.charTyped(charInput, modifiers);
+        return super.charTyped(charInput, modifiers);
     }
 
     @Override
-    public boolean keyPressed(KeyEvent keyInput) {
-        if (keyInput.input() == GLFW.GLFW_KEY_ENTER) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ENTER) {
             this.onClose(); //close the gui
             String text = this.input.getValue(); //parser shit
 
@@ -91,14 +88,14 @@ public class GuiSimulate extends CyvGui {
                 return true;
             }
             return true;
-        } else if (keyInput.input() == GLFW.GLFW_KEY_UP) { //scroll up
+        } else if (keyCode == GLFW.GLFW_KEY_UP) { //scroll up
             if (chatHistoryIndex < chatHistory.size()) {
                 chatHistoryIndex++;
                 this.input.setValue(chatHistory.get(chatHistory.size()-chatHistoryIndex));
                 return true;
             }
 
-        } else if (keyInput.input() == GLFW.GLFW_KEY_DOWN) { //scroll down
+        } else if (keyCode == GLFW.GLFW_KEY_DOWN) { //scroll down
             if (chatHistoryIndex > 0) {
                 chatHistoryIndex--;
                 if (chatHistoryIndex == 0) {
@@ -111,15 +108,15 @@ public class GuiSimulate extends CyvGui {
 
         }
 
-        this.input.keyPressed(keyInput);
+        this.input.keyPressed(keyCode, scanCode, modifiers);
 
-        return super.keyPressed(keyInput);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-        input.mouseClicked(click, doubled);
-        if (button.mouseClicked(click, doubled)) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        input.mouseClicked(mouseX, mouseY, button);
+        if (this.button.mouseClicked(mouseX, mouseY, button)) {
             this.onClose();
             String text = input.getValue(); //parser shit
 
@@ -135,7 +132,7 @@ public class GuiSimulate extends CyvGui {
                 output(text);
 
             }}
-        return super.mouseClicked(click, doubled);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private void output(String text) {

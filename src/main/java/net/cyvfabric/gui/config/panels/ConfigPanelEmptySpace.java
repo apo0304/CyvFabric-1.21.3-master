@@ -4,9 +4,7 @@ import com.mojang.blaze3d.platform.Window;
 import net.cyvfabric.gui.GuiModConfig;
 import net.cyvfabric.gui.config.ConfigPanel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class ConfigPanelEmptySpace implements ConfigPanel {
     public final int index;
@@ -30,7 +28,7 @@ public class ConfigPanelEmptySpace implements ConfigPanel {
     }
 
     @Override
-    public void draw(GuiGraphicsExtractor context, int mouseX, int mouseY, int scroll) {}
+    public void draw(GuiGraphics context, int mouseX, int mouseY, int scroll) {}
 
     @Override
     public void mouseDragged(double mouseX, double mouseY) {}
@@ -43,10 +41,10 @@ public class ConfigPanelEmptySpace implements ConfigPanel {
     }
 
     @Override
-    public void mouseClicked(MouseButtonEvent click, boolean doubled) {}
+    public void mouseClicked(double mouseX, double mouseY, int button) {}
 
     @Override
-    public void charTyped(CharacterEvent input) {}
+    public void charTyped(char input, int modifiers) {}
 
     @Override
     public void save() {}

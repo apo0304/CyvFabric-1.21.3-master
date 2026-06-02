@@ -3,7 +3,7 @@ package net.cyvfabric.hud.structure;
 import net.cyvfabric.CyvFabric;
 import net.cyvfabric.config.CyvClientConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.LinkedHashMap;
 
@@ -99,12 +99,12 @@ public abstract class DraggableHUDElement implements IRenderer {
         return position;
     }
 
-    protected void text(GuiGraphicsExtractor context, Object string, int x, int y, long color) {
+    protected void text(GuiGraphics context, Object string, int x, int y, long color) {
         this.text(context, string, x, y, color, true);
     }
 
-    protected void text(GuiGraphicsExtractor context, Object string, int x, int y, long color, boolean shadow) {
+    protected void text(GuiGraphics context, Object string, int x, int y, long color, boolean shadow) {
         long drawColor = (this.isVisible) ? color : 0xFFAAAAAA;
-        context.text(mc.font, string.toString(), x, y, ((Long) drawColor).intValue(), shadow);
+        context.drawString(mc.font, string.toString(), x, y, ((Long) drawColor).intValue(), shadow);
     }
 }

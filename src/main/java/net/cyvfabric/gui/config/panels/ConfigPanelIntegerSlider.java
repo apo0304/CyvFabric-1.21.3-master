@@ -7,9 +7,7 @@ import net.cyvfabric.gui.GuiModConfig;
 import net.cyvfabric.gui.config.ConfigPanel;
 import net.cyvfabric.util.GuiUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
 public class ConfigPanelIntegerSlider implements ConfigPanel {
@@ -45,16 +43,16 @@ public class ConfigPanelIntegerSlider implements ConfigPanel {
     }
 
     @Override
-    public void draw(GuiGraphicsExtractor context, int mouseX, int mouseY, int scroll) {
+    public void draw(GuiGraphics context, int mouseX, int mouseY, int scroll) {
         //text label
-        context.text(Minecraft.getInstance().font, this.displayString, this.xPosition, this.yPosition+this.sizeY/2-Minecraft.getInstance().font.lineHeight/2+1-scroll, 0xFFFFFFFF);
+        context.drawString(Minecraft.getInstance().font, this.displayString, this.xPosition, this.yPosition+this.sizeY/2-Minecraft.getInstance().font.lineHeight/2+1-scroll, 0xFFFFFFFF);
         //bg
         GuiUtils.drawRoundedRect(context, this.xPosition+this.sizeX/2, this.yPosition-scroll, this.xPosition+this.sizeX, this.yPosition+this.sizeY-scroll, 3, this.mouseInBounds(mouseX, mouseY) ? CyvFabric.theme.shade1 : CyvFabric.theme.shade2);
         //slider
         GuiUtils.drawRoundedRect(context, this.xPosition+this.sizeX/2+(int)(sizeX/2 * (sliderValue-minValue)/(maxValue-minValue))-3, this.yPosition-1-scroll,
                 this.xPosition+this.sizeX/2+(int)(sizeX/2 * (sliderValue-minValue)/(maxValue-minValue))+3, this.yPosition+this.sizeY+1-scroll, 1, CyvFabric.theme.mainBase());
         //amount
-        context.centeredText(Minecraft.getInstance().font, " "+this.sliderValue, this.xPosition+this.sizeX*3/4, this.yPosition+this.sizeY/2-Minecraft.getInstance().font.lineHeight/2+1-scroll, 0xFFFFFFFF);
+        context.drawCenteredString(Minecraft.getInstance().font, " "+this.sliderValue, this.xPosition+this.sizeX*3/4, this.yPosition+this.sizeY/2-Minecraft.getInstance().font.lineHeight/2+1-scroll, 0xFFFFFFFF);
 
     }
 
@@ -74,14 +72,14 @@ public class ConfigPanelIntegerSlider implements ConfigPanel {
     }
 
     @Override
-    public void mouseClicked(MouseButtonEvent click, boolean doubled) {
+    public void mouseClicked(double mouseX, double mouseY, int button) {
         // TODO Auto-generated method stub
 
     }
 
 
     @Override
-    public void charTyped(CharacterEvent input) {
+    public void charTyped(char input, int modifiers) {
         // TODO Auto-generated method stub
 
     }

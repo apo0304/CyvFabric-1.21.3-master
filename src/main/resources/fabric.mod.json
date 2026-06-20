@@ -18,9 +18,6 @@
 		],
 		"client": [
 			"net.cyvfabric.CyvFabricClient"
-		],
-		"fabric-datagen": [
-			"net.cyvfabric.CyvFabricDataGenerator"
 		]
 	},
 	"mixins": [],

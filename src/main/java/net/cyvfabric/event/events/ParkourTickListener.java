@@ -3,6 +3,7 @@ package net.cyvfabric.event.events;
 import mcpk.utils.MathHelper;
 import net.cyvfabric.CyvFabric;
 import net.cyvfabric.config.CyvClientConfig;
+import net.cyvfabric.hud.RenderLayers;
 import net.cyvfabric.util.parkour.LandingBlock;
 import net.cyvfabric.util.parkour.LandingBlockOffset;
 import net.cyvfabric.util.parkour.LandingMode;
@@ -12,7 +13,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.debug.DebugRenderer;
+import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -628,6 +629,8 @@ public class ParkourTickListener {
 
     private static void renderBox(WorldRenderContext context, AABB bb, float r, float g, float b, float a) {
         if (bb == null || bb.getXsize() <= 0 || bb.getYsize() <= 0 || bb.getZsize() <= 0) return;
-        DebugRenderer.renderFilledBox(context.matrixStack(), context.consumers(), bb.inflate(0.001), r, g, b, a);
+        AABB expanded = bb.inflate(0.001);
+        ShapeRenderer.addChainedFilledBoxVertices(context.matrixStack(), context.consumers().getBuffer(RenderLayers.HIGHLIGHT_BOX_LAYER),
+                expanded.minX, expanded.minY, expanded.minZ, expanded.maxX, expanded.maxY, expanded.maxZ, r, g, b, a);
     }
 }

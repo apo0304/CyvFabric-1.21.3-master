@@ -50,15 +50,15 @@ public class LabelBundleCoordinates extends LabelBundle {
                 LabelFormat.NUMBER
         ));
 
-        this.labels.add(new DraggableHUDLabel<>(  // TODO: add frame based angles + facing axis options
+        this.labels.add(new DraggableHUDLabel<>(
                 "labelYaw",
                 "Yaw",
                 "F",
                 true,
                 new ScreenPosition(0, 37),
-                () -> (ParkourTickListener.lastTick == null)
+                () -> (mc.player == null)
                         ? 0
-                        : ParkourTickListener.lastTick.f,
+                        : mc.player.getYRot(),
                 LabelFormat.WRAPPED_ANGLE
         ));
 
@@ -67,9 +67,9 @@ public class LabelBundleCoordinates extends LabelBundle {
                 "Pitch",
                 true,
                 new ScreenPosition(0, 46),
-                () -> (ParkourTickListener.lastTick == null)
+                () -> (mc.player == null)
                         ? 0
-                        : ParkourTickListener.lastTick.p,
+                        : mc.player.getXRot(),
                 LabelFormat.ANGLE
         ));
     }

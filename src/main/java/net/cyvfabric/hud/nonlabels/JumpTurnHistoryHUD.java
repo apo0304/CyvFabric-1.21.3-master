@@ -1,14 +1,12 @@
 package net.cyvfabric.hud.nonlabels;
 
+import net.cyvfabric.CyvFabric;
 import net.cyvfabric.config.CyvClientColorHelper;
 import net.cyvfabric.config.CyvClientConfig;
 import net.cyvfabric.event.events.ParkourTickListener;
 import net.cyvfabric.hud.structure.DraggableHUDElement;
 import net.cyvfabric.hud.structure.ScreenPosition;
 import net.minecraft.client.gui.GuiGraphics;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 
 public class JumpTurnHistoryHUD extends DraggableHUDElement {
     private static final int LINE_HEIGHT = 9;
@@ -32,12 +30,11 @@ public class JumpTurnHistoryHUD extends DraggableHUDElement {
         long color1 = CyvClientColorHelper.color1.drawColor;
         long color2 = CyvClientColorHelper.color2.drawColor;
 
-        DecimalFormat format = createFormat();
         for (int i = 0; i < lines; i++) {
             String prefix = (i + 1) + ": ";
             String value = dummy || i >= ParkourTickListener.jumpTurnAnglesRecorded
-                    ? format.format(0.0D)
-                    : format.format(ParkourTickListener.jumpTurnAngles[i]);
+                    ? CyvFabric.df.format(0.0D)
+                    : CyvFabric.df.format(ParkourTickListener.jumpTurnAngles[i]);
             int y = pos.getAbsoluteY() + 1 + (i * LINE_HEIGHT);
 
             text(context, prefix, pos.getAbsoluteX() + 1, y, color1);
@@ -58,27 +55,5 @@ public class JumpTurnHistoryHUD extends DraggableHUDElement {
     private static int getDisplayCount() {
         int count = CyvClientConfig.getInt("turnangle", 20);
         return Math.max(1, Math.min(ParkourTickListener.JUMP_TURN_HISTORY_SIZE, count));
-    }
-
-    private static DecimalFormat createFormat() {
-        int decimals = Math.max(1, Math.min(16, CyvClientConfig.getInt("turnangleDecimals", 16)));
-        StringBuilder pattern = new StringBuilder("0");
-        if (decimals > 0) {
-            pattern.append(".");
-            for (int i = 0; i < decimals; i++) {
-                pattern.append("0");
-            }
-        }
-
-        DecimalFormat format = new DecimalFormat(pattern.toString());
-        if (CyvClientConfig.getBoolean("turnangleTrimZeroes", false)) {
-            format.setMinimumFractionDigits(0);
-        }
-        format.setMaximumFractionDigits(decimals);
-
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setDecimalSeparator('.');
-        format.setDecimalFormatSymbols(symbols);
-        return format;
     }
 }

@@ -596,31 +596,27 @@ public class ParkourTickListener {
         context.matrixStack().pushPose();
         context.matrixStack().translate(-camera.x, -camera.y, -camera.z);
 
-        if (CyvClientConfig.getBoolean("highlightLandingCond", false)) {
-            if (landingBlock != null) {
-                renderBox(context, new AABB(landingBlock.xMinCond + 0.3, landingBlock.smallestY(),
-                        landingBlock.zMinCond + 0.3, landingBlock.xMaxCond - 0.3, landingBlock.largestY(),
-                        landingBlock.zMaxCond - 0.3), 0.0F, 0.75F, 1.0F, 0.15F);
-            }
+        if (CyvClientConfig.getBoolean("highlightLandingCond", false) && landingBlock != null) {
+            renderBox(context, new AABB(landingBlock.xMinCond + 0.3, landingBlock.smallestY(),
+                    landingBlock.zMinCond + 0.3, landingBlock.xMaxCond - 0.3, landingBlock.largestY(),
+                    landingBlock.zMaxCond - 0.3), 0.0F, 0.75F, 1.0F, 0.15F);
+        }
 
-            if (momentumBlock != null) {
-                renderBox(context, new AABB(momentumBlock.xMinCond + 0.3, momentumBlock.smallestY(),
-                        momentumBlock.zMinCond + 0.3, momentumBlock.xMaxCond - 0.3, momentumBlock.largestY(),
-                        momentumBlock.zMaxCond - 0.3), 1.0F, 0.0F, 0.0F, 0.15F);
+        if (CyvClientConfig.getBoolean("highlightMomentumCond", false) && momentumBlock != null) {
+            renderBox(context, new AABB(momentumBlock.xMinCond + 0.3, momentumBlock.smallestY(),
+                    momentumBlock.zMinCond + 0.3, momentumBlock.xMaxCond - 0.3, momentumBlock.largestY(),
+                    momentumBlock.zMaxCond - 0.3), 1.0F, 0.0F, 0.0F, 0.15F);
+        }
+
+        if (CyvClientConfig.getBoolean("highlightLanding", false) && landingBlock != null) {
+            for (AABB bb : landingBlock.bb) {
+                renderBox(context, bb, 0.0F, 0.75F, 1.0F, 0.4F);
             }
         }
 
-        if (CyvClientConfig.getBoolean("highlightLanding", false)) {
-            if (landingBlock != null) {
-                for (AABB bb : landingBlock.bb) {
-                    renderBox(context, bb, 0.0F, 0.75F, 1.0F, 0.4F);
-                }
-            }
-
-            if (momentumBlock != null) {
-                for (AABB bb : momentumBlock.bb) {
-                    renderBox(context, bb, 1.0F, 0.0F, 0.0F, 0.4F);
-                }
+        if (CyvClientConfig.getBoolean("highlightMomentum", false) && momentumBlock != null) {
+            for (AABB bb : momentumBlock.bb) {
+                renderBox(context, bb, 1.0F, 0.0F, 0.0F, 0.4F);
             }
         }
 

@@ -1,6 +1,7 @@
 package net.cyvfabric.gui;
 
 import net.cyvfabric.config.CyvClientConfig;
+import net.cyvfabric.event.events.ParkourTickListener;
 import net.cyvfabric.util.CyvGui;
 import net.cyvfabric.util.parkour.LandingAxis;
 import net.cyvfabric.util.parkour.LandingBlock;
@@ -52,15 +53,15 @@ public class GuiLb extends CyvGui {
                 }).bounds(this.width - 155, 130, 150, 20)
                 .build();
 
-        this.bbToggle = Button.builder(Component.nullToEmpty("BB Visible: " + CyvClientConfig.getBoolean("highlightLanding", false)), (widget) -> {
-                    CyvClientConfig.set("highlightLanding", !CyvClientConfig.getBoolean("highlightLanding", false));
-                    bbToggle.setMessage(Component.nullToEmpty("BB Visible: " + CyvClientConfig.getBoolean("highlightLanding", false)));
+        this.bbToggle = Button.builder(Component.nullToEmpty(getBlockLabel() + " BB Visible: " + getBlockVisible()), (widget) -> {
+                    CyvClientConfig.set(getBlockVisibleConfigKey(), !getBlockVisible());
+                    bbToggle.setMessage(Component.nullToEmpty(getBlockLabel() + " BB Visible: " + getBlockVisible()));
                 }).bounds(this.width - 155, 55, 150, 20)
                 .build();
 
-        this.condToggle = Button.builder(Component.nullToEmpty("Cond Visible: " + CyvClientConfig.getBoolean("highlightLandingCond", false)), (widget) -> {
-                    CyvClientConfig.set("highlightLandingCond", !CyvClientConfig.getBoolean("highlightLandingCond", false));
-                    condToggle.setMessage(Component.nullToEmpty("Cond Visible: " + CyvClientConfig.getBoolean("highlightLandingCond", false)));
+        this.condToggle = Button.builder(Component.nullToEmpty(getBlockLabel() + " Cond Visible: " + getCondVisible()), (widget) -> {
+                    CyvClientConfig.set(getCondVisibleConfigKey(), !getCondVisible());
+                    condToggle.setMessage(Component.nullToEmpty(getBlockLabel() + " Cond Visible: " + getCondVisible()));
                 }).bounds(this.width - 155, 80, 150, 20)
                 .build();
 
@@ -116,6 +117,30 @@ public class GuiLb extends CyvGui {
             lb.axis = LandingAxis.both;
             this.axisButton.setMessage(Component.nullToEmpty("Axis: Both"));
         }
+    }
+
+    private boolean isMomentumBlock() {
+        return lb == ParkourTickListener.momentumBlock;
+    }
+
+    private String getBlockLabel() {
+        return isMomentumBlock() ? "MM" : "LB";
+    }
+
+    private String getBlockVisibleConfigKey() {
+        return isMomentumBlock() ? "highlightMomentum" : "highlightLanding";
+    }
+
+    private String getCondVisibleConfigKey() {
+        return isMomentumBlock() ? "highlightMomentumCond" : "highlightLandingCond";
+    }
+
+    private boolean getBlockVisible() {
+        return CyvClientConfig.getBoolean(getBlockVisibleConfigKey(), false);
+    }
+
+    private boolean getCondVisible() {
+        return CyvClientConfig.getBoolean(getCondVisibleConfigKey(), false);
     }
 
     @Override

@@ -27,7 +27,9 @@ public class CyvClientConfig {
         configFields.put("sendMmChatOffset", new ConfigValue<Boolean>(false));
 
         configFields.put("highlightLanding", new ConfigValue<Boolean>(false));
+        configFields.put("highlightMomentum", new ConfigValue<Boolean>(false));
         configFields.put("highlightLandingCond", new ConfigValue<Boolean>(false));
+        configFields.put("highlightMomentumCond", new ConfigValue<Boolean>(false));
         configFields.put("momentumPbCancelling", new ConfigValue<Boolean>(false));
         configFields.put("turnangle", new ConfigValue<Integer>(20));
 

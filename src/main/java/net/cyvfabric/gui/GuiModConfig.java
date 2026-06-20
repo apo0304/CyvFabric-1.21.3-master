@@ -142,25 +142,27 @@ public class GuiModConfig extends CyvGui {
         panels.add(new ConfigPanelToggle(7, "showMilliseconds", "Show Millisecond Timings", this));
         panels.add(new ConfigPanelToggle(8, "sendLbChatOffset", "Send Landing Offset", this));
         panels.add(new ConfigPanelToggle(9, "sendMmChatOffset", "Send Momentum Offset", this));
-        panels.add(new ConfigPanelToggle(10, "highlightLanding", "Highlight Landing Blocks", this));
-        panels.add(new ConfigPanelToggle(11, "highlightLandingCond", "Highlight Landing Conditions", this));
-        panels.add(new ConfigPanelToggle(12, "momentumPbCancelling", "Momentum PB Cancelling", this));
-        panels.add(new ConfigPanelEmptySpace(13, this));
-
-        //turn angle
-        panels.add(new ConfigPanelIntegerSlider(14, "turnangle", "turnangle", 1, 20, this));
+        panels.add(new ConfigPanelToggle(10, "highlightLanding", "Highlight LB Blocks", this));
+        panels.add(new ConfigPanelToggle(11, "highlightMomentum", "Highlight MM Blocks", this));
+        panels.add(new ConfigPanelToggle(12, "highlightLandingCond", "Highlight LB Conditions", this));
+        panels.add(new ConfigPanelToggle(13, "highlightMomentumCond", "Highlight MM Conditions", this));
+        panels.add(new ConfigPanelToggle(14, "momentumPbCancelling", "Momentum PB Cancelling", this));
         panels.add(new ConfigPanelEmptySpace(15, this));
 
+        //turn angle
+        panels.add(new ConfigPanelIntegerSlider(16, "turnangle", "turnangle", 1, 20, this));
+        panels.add(new ConfigPanelEmptySpace(17, this));
+
         //inertia
-        panels.add(new ConfigPanelToggle(16, "inertiaEnabled", "Inertia Listener Enabled", this));
-        panels.add(new ConfigPanelIntegerSlider(17, "inertiaTick", "Air tick", 1, 12, this));
-        panels.add(new ConfigPanelDecimalEntry(18, "inertiaMin", "Min Speed", this));
-        panels.add(new ConfigPanelDecimalEntry(19, "inertiaMax", "Max Speed", this));
-        panels.add(new ConfigPanelOptionSwitcher<String>(20, "inertiaGroundType", "Ground Type", new String[] {"normal", "ice", "slime"}, this));
+        panels.add(new ConfigPanelToggle(18, "inertiaEnabled", "Inertia Listener Enabled", this));
+        panels.add(new ConfigPanelIntegerSlider(19, "inertiaTick", "Air tick", 1, 12, this));
+        panels.add(new ConfigPanelDecimalEntry(20, "inertiaMin", "Min Speed", this));
+        panels.add(new ConfigPanelDecimalEntry(21, "inertiaMax", "Max Speed", this));
+        panels.add(new ConfigPanelOptionSwitcher<String>(22, "inertiaGroundType", "Ground Type", new String[] {"normal", "ice", "slime"}, this));
 
         //macro
-        panels.add(new ConfigPanelEmptySpace(21, this));
-        panels.add(new ConfigPanelToggle(22, "smoothMacro", "Smooth Macro", this));
+        panels.add(new ConfigPanelEmptySpace(23, this));
+        panels.add(new ConfigPanelToggle(24, "smoothMacro", "Smooth Macro", this));
 
         maxScroll = (int) Math.max(0, Minecraft.getInstance().font.lineHeight * 2 * Math.ceil(panels.size()) - (sizeY-20));
         if (scroll > maxScroll) scroll = maxScroll;
